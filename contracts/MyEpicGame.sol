@@ -46,6 +46,14 @@ contract MyEpicGame is ERC721 {
 
     BigBoss public bigBoss;
 
+    // Events to confirm particular action successful completion
+    event ComradeNFTMinted(
+        address sender,
+        uint256 tokenId,
+        uint256 characterIndex
+    );
+    event AttackComplete(uint256 bossNewHp, uint256 playerNewHp);
+
     constructor(
         string[] memory charactersNames,
         string[] memory charactersimageURIs,
@@ -118,6 +126,9 @@ contract MyEpicGame is ERC721 {
 
         // map the nft holder to the new token id
         nftHolders[msg.sender] = _newItemId;
+
+        // emit the event
+        emit ComradeNFTMinted(msg.sender, _newItemId, _characterIndex);
 
         // Increment the tokenIds counter for next request to avoid collison
         _tokenIds.increment();
@@ -224,5 +235,38 @@ contract MyEpicGame is ERC721 {
             player.hp,
             player.attackDamage
         );
+
+        // Emit the attack complete event
+        emit AttackComplete(bigBoss.hp, player.hp);
+    }
+
+    function checkIfUserHasNFT()
+        public
+        view
+        returns (CharacterAttributes memory)
+    {
+        // Get the tokenId of the NFT for the current player
+        uint256 nftTokenId = nftHolders[msg.sender];
+
+        // tokenId starts at 1, so if the tokenId is 0, the player doesn't have an NFT
+        if (nftTokenId > 0) {
+            return nftHolderAttributes[nftTokenId];
+        } else {
+            // return an empty struct to denote there is no NFT for the player
+            CharacterAttributes memory emptyStruct;
+            return emptyStruct;
+        }
+    }
+
+    function getBigBoss() public view returns (BigBoss memory) {
+        return bigBoss;
+    }
+
+    function getAllDefaultCharacters()
+        public
+        view
+        returns (CharacterAttributes[] memory)
+    {
+        return defaultCharacters;
     }
 }
