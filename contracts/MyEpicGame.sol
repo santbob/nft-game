@@ -159,7 +159,7 @@ contract MyEpicGame is ERC721 {
                         Strings.toString(_tokenId),
                         '", "description": "',
                         "This is an NFT that lets people play in the game MetaVerse Facist Slayer!",
-                        '", "image": "',
+                        '", "image": "ipfs://',
                         charAttributes.imageURI,
                         '", "attributes": [ { "trait_type": "Health Points", "value": ',
                         strHp,
